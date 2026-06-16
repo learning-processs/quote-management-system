@@ -21,7 +21,7 @@ const allowedOrigins = [
   'http://localhost:5173', // Your Client port
   'http://localhost:5175', // Your Admin port
   'https://quote-management-system-admin.vercel.app',
-  'https://quote-alpha-tawny.vercel.app' // Your Production frontend
+  'https://lifefkd24x7.vercel.app' // Your Production frontend
 ];
 
 const corsOptions = {

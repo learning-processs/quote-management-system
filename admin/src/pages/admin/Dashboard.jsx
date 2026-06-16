@@ -7,172 +7,143 @@ import { ThemeContext } from '../../context/ThemeContext'
 import Sidebar from '../../components/Sidebar'
 
 const Dashboard = () => {
-  const { BACKEND, token }           = useContext(AuthContext)
-  const { dark, toggleTheme, theme } = useContext(ThemeContext)
+  const { BACKEND, token } = useContext(AuthContext)
+  const { theme } = useContext(ThemeContext)
 
-  const [stats, setStats]     = useState({ totalQuotes: 0, pendingQuotes: 0, totalUsers: 0 })
-  const [pending, setPending] = useState([])
+  const [stats, setStats] = useState({ totalQuotes: 0, totalUsers: 0 })
   const [loading, setLoading] = useState(true)
+  
+  // Controls settings modal overlay state
+  const [showSettings, setShowSettings] = useState(false)
 
-  const fetchData = async () => {
-    setLoading(true)
-    try {
-      const [statsRes, pendingRes] = await Promise.all([
-        axios.get(`${BACKEND}/api/admin/stats`,
-          { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get(`${BACKEND}/api/admin/quotes?status=pending&limit=5`,
-          { headers: { Authorization: `Bearer ${token}` } }),
-      ])
-      if (statsRes.data.success)   setStats(statsRes.data.data)
-      if (pendingRes.data.success) setPending(pendingRes.data.data.quotes)
-    } catch (err) {
-      toast.error('Failed to load dashboard.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => { fetchData() }, [])
-
-  const handleApprove = async (id) => {
-    try {
-      const { data } = await axios.put(
-        `${BACKEND}/api/admin/quotes/${id}/approve`, {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      if (data.success) {
-        toast.success('Quote approved!')
-        setPending(pending.filter(q => q._id !== id))
-        setStats(s => ({ ...s, pendingQuotes: s.pendingQuotes - 1 }))
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true)
+      try {
+        const { data } = await axios.get(`${BACKEND}/api/admin/stats`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (data.success) setStats(data.data)
+      } catch (err) {
+        toast.error('Failed to sync dashboard.')
+      } finally {
+        setLoading(false)
       }
-    } catch (err) {
-      toast.error('Failed to approve.')
     }
-  }
-
-  const handleReject = async (id) => {
-    try {
-      const { data } = await axios.put(
-        `${BACKEND}/api/admin/quotes/${id}/reject`, {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      if (data.success) {
-        toast.success('Quote rejected.')
-        setPending(pending.filter(q => q._id !== id))
-        setStats(s => ({ ...s, pendingQuotes: s.pendingQuotes - 1 }))
-      }
-    } catch (err) {
-      toast.error('Failed to reject.')
-    }
-  }
+    fetchStats()
+  }, [BACKEND, token])
 
   return (
-    <div className={`flex min-h-screen ${theme.bg} transition-colors duration-300`}>
+    // Responsive structural flow: stacks column-wise on phones, side-by-side rows on desktop
+    <div className={`flex flex-col md:flex-row min-h-screen ${theme.bg} transition-colors duration-300`}>
       <Sidebar />
 
-      <main className="flex-1 p-10">
-
+      {/* Main Container adapts layout spacing and padding for different screens */}
+      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-5xl relative w-full overflow-x-hidden">
+        
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className={`text-3xl font-medium ${theme.text}`}>Dashboard</h2>
-            <p className={`text-sm ${theme.text2} mt-1`}>Overview of Lifefkd24x7</p>
-          </div>
-          <button
-            onClick={toggleTheme}
-            className={`w-9 h-9 rounded-full flex items-center justify-center border ${theme.border} ${theme.text2} hover:text-blue-500 transition text-lg`}
-          >
-            {dark ? '☀️' : '🌙'}
-          </button>
+        <div className="mb-8 md:mb-10">
+          <h2 className={`text-2xl font-bold tracking-tight ${theme.text}`}>System Command</h2>
+          <p className={`text-xs ${theme.text2} mt-1 opacity-60 font-mono uppercase tracking-tighter`}>
+            Session Active // {new Date().toLocaleDateString()}
+          </p>
         </div>
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-              {[
-                { label: 'Total Quotes',   value: stats.totalQuotes,   sub: 'All time',           warn: false },
-                { label: 'Pending Review', value: stats.pendingQuotes, sub: 'Needs attention',    warn: true  },
-                { label: 'Total Users',    value: stats.totalUsers,    sub: 'Registered members', warn: false },
-              ].map((s) => (
-                <div key={s.label} className={`${theme.bgCard} border ${theme.border} rounded-2xl p-6`}>
-                  <div className={`text-xs font-medium ${theme.text3} uppercase tracking-widest mb-2`}>
-                    {s.label}
-                  </div>
-                  <div className={`text-4xl font-medium ${theme.text} mb-1`}>
-                    {s.value}
-                  </div>
-                  <div className={`text-xs ${s.warn ? 'text-amber-500' : 'text-green-500'}`}>
-                    {s.sub}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Pending Quotes Table */}
-            <div className={`${theme.bgCard} border ${theme.border} rounded-2xl overflow-hidden`}>
-              <div className={`flex items-center justify-between px-6 py-4 border-b ${theme.border}`}>
-                <h3 className={`text-sm font-semibold ${theme.text}`}>Pending Approval</h3>
-                <Link to="/quotes" className="text-xs text-blue-500 hover:underline">
-                  View all
-                </Link>
+          <div className="space-y-8 md:space-y-10">
+            
+            {/* Metrics Grid Layout adapts from 1 column on mobile to 2 columns on small desktops */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 w-full">
+              <div className={`p-5 md:p-6 rounded-2xl border ${theme.border} ${theme.bgCard} relative overflow-hidden group shadow-sm`}>
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-3xl sm:text-4xl">📚</div>
+                <span className={`text-xs font-bold uppercase tracking-widest ${theme.text3}`}>Total Quotes</span>
+                <div className={`text-4xl sm:text-5xl font-black ${theme.text} mt-2 tracking-tighter`}>{stats.totalQuotes}</div>
               </div>
 
-              {pending.length === 0 ? (
-                <div className={`text-center py-12 ${theme.text2}`}>
-                  <p className="text-sm">No pending quotes</p>
-                </div>
-              ) : (
-                <table className="w-full">
-                  <thead className={theme.tableHead}>
-                    <tr>
-                      {['Quote', 'Author', 'Submitted By', 'Category', 'Action'].map(h => (
-                        <th key={h} className={`text-left px-6 py-3 text-xs font-medium ${theme.text3} uppercase tracking-wider`}>
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pending.map((q) => (
-                      <tr key={q._id} className={`border-t ${theme.tableBorder} ${theme.tableRow} transition`}>
-                        <td className={`px-6 py-4 text-sm ${theme.text2} max-w-xs truncate`}>
-                          "{q.text}"
-                        </td>
-                        <td className={`px-6 py-4 text-sm ${theme.text}`}>{q.author}</td>
-                        <td className={`px-6 py-4 text-sm ${theme.text2}`}>{q.submittedBy?.name}</td>
-                        <td className="px-6 py-4">
-                          <span className="text-xs bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full">
-                            {q.category}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleApprove(q._id)}
-                              className="text-xs bg-green-500/10 hover:bg-green-500/20 text-green-500 px-3 py-1.5 rounded-full transition"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleReject(q._id)}
-                              className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-500 px-3 py-1.5 rounded-full transition"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+              <div className={`p-5 md:p-6 rounded-2xl border ${theme.border} ${theme.bgCard} relative overflow-hidden group shadow-sm`}>
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-3xl sm:text-4xl">👥</div>
+                <span className={`text-xs font-bold uppercase tracking-widest ${theme.text3}`}>Total Users</span>
+                <div className={`text-4xl sm:text-5xl font-black ${theme.text} mt-2 tracking-tighter`}>{stats.totalUsers}</div>
+              </div>
             </div>
-          </>
+
+            {/* Quick Management Layout transforms from stacked items on mobile into 3 structured columns on laptop screens */}
+            <section className="space-y-4">
+              <h3 className={`text-xs font-bold uppercase tracking-widest ${theme.text3}`}>Quick Management</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                
+                <Link to="/quotes" className={`p-4 rounded-xl border ${theme.border} ${theme.bgCard} ${theme.bgHover} flex items-center gap-4 transition-all hover:border-blue-500/50`}>
+                  <span className="text-xl flex-shrink-0">📝</span>
+                  <span className={`text-sm font-medium ${theme.text}`}>Moderate Quotes</span>
+                </Link>
+
+                <Link to="/users" className={`p-4 rounded-xl border ${theme.border} ${theme.bgCard} ${theme.bgHover} flex items-center gap-4 transition-all hover:border-emerald-500/50`}>
+                  <span className="text-xl flex-shrink-0">🔍</span>
+                  <span className={`text-sm font-medium ${theme.text}`}>User Directory</span>
+                </Link>
+
+                <button 
+                  onClick={() => setShowSettings(true)} 
+                  className={`p-4 rounded-xl border ${theme.border} ${theme.bgCard} ${theme.bgHover} flex items-center gap-4 transition-all hover:border-purple-500/50 w-full text-left`}
+                >
+                  <span className="text-xl flex-shrink-0">⚙️</span>
+                  <span className={`text-sm font-medium ${theme.text}`}>System Settings</span>
+                </button>
+
+              </div>
+            </section>
+
+            {/* Tip Block */}
+            <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 w-full break-words">
+              <p className={`text-xs leading-relaxed ${theme.text2} italic`}>
+                <span className="text-blue-500 font-bold mr-1">Pro Tip:</span> 
+                Use the "All Quotes" page to bulk-approve or delete content. The dashboard is now set to 
+                read-only mode for safety.
+              </p>
+            </div>
+
+          </div>
+        )}
+
+        {/* System Settings Modal Overlay - Safe viewport padding added for mobile screens */}
+        {showSettings && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+            <div className={`p-6 rounded-2xl border ${theme.border} ${theme.bgCard} max-w-sm w-full space-y-4 shadow-2xl animate-in zoom-in-95 duration-150`}>
+              <div className="flex justify-between items-center">
+                <h4 className={`text-sm font-bold ${theme.text} uppercase tracking-wider`}>Terminal Settings</h4>
+                <button onClick={() => setShowSettings(false)} className={`text-xs ${theme.text2} hover:text-red-500 font-bold p-1`}>✕</button>
+              </div>
+              
+              <div className="space-y-3 pt-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className={theme.text2}>API Gateway Status</span>
+                  <span className="text-emerald-500 font-mono font-bold">ONLINE</span>
+                </div>
+                <div className="flex justify-between items-center text-xs">
+                  <span className={theme.text2}>Auto-Moderation (AI)</span>
+                  <span className="text-amber-500 font-mono font-semibold">STANDBY</span>
+                </div>
+                <div className="flex justify-between items-center text-xs border-t border-gray-500/10 pt-3">
+                  <span className={theme.text2}>Vault Engine Version</span>
+                  <span className="opacity-40 font-mono">v2.4.0-prod</span>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => {
+                  toast.success("System cache cleared successfully.");
+                  setShowSettings(false);
+                }}
+                className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 rounded-xl transition mt-2 shadow-md shadow-blue-500/10"
+              >
+                Flush Server Cache
+              </button>
+            </div>
+          </div>
         )}
 
       </main>

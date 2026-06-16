@@ -47,17 +47,19 @@ const AddQuote = () => {
   }
 
   return (
-    <div className={`flex min-h-screen ${theme.bg} transition-colors duration-300`}>
+    // changed from simple flex to flex-col on mobile, flex-row on desktop
+    <div className={`flex flex-col md:flex-row min-h-screen ${theme.bg} transition-colors duration-300`}>
       <Sidebar />
 
-      <main className="flex-1 p-10">
-        <div className="max-w-xl">
+      {/* Adjusted padding dynamically for mobile views */}
+      <main className="flex-1 p-5 sm:p-10 w-full overflow-x-hidden">
+        <div className="max-w-xl mx-auto md:mx-0">
 
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className={`text-3xl font-medium ${theme.text}`}>Add a Quote</h2>
-              <p className={`text-sm ${theme.text2} mt-1`}>Share something that moved you</p>
+              <h2 className={`text-2xl sm:text-3xl font-medium ${theme.text}`}>Add a Quote</h2>
+              <p className={`text-xs sm:text-sm ${theme.text2} mt-1`}>Share something that moved you</p>
             </div>
           </div>
 
@@ -117,12 +119,12 @@ const AddQuote = () => {
 
             {/* Live Preview */}
             {form.text && (
-              <div>
+              <div className="animate-in fade-in duration-200">
                 <label className={`block text-sm font-medium ${theme.text2} mb-2`}>
                   Live preview
                 </label>
-                <div className={`${theme.bgCard} border ${theme.border} border-l-4 border-l-blue-500 rounded-2xl px-6 py-5`}>
-                  <p className={`${theme.text} text-base italic font-light leading-relaxed`}>
+                <div className={`${theme.bgCard} border ${theme.border} border-l-4 border-l-blue-500 rounded-2xl px-5 py-4 sm:px-6 sm:py-5 break-words`}>
+                  <p className={`${theme.text} text-sm sm:text-base italic font-light leading-relaxed`}>
                     "{form.text}"
                   </p>
                   {form.author && (
@@ -133,18 +135,18 @@ const AddQuote = () => {
             )}
 
             {/* Buttons */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-8 py-3 rounded-full transition disabled:opacity-50"
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-8 py-3 rounded-full transition disabled:opacity-50"
               >
                 {loading ? 'Submitting...' : 'Submit Quote'}
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
-                className={`border ${theme.border} ${theme.text2} hover:border-blue-500 hover:text-blue-500 text-sm font-medium px-8 py-3 rounded-full transition`}
+                className={`w-full sm:w-auto text-center border ${theme.border} ${theme.text2} hover:border-blue-500 hover:text-blue-500 text-sm font-medium px-8 py-3 rounded-full transition`}
               >
                 Cancel
               </button>

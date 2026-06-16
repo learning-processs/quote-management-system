@@ -10,10 +10,10 @@ const MyQuotes = () => {
   const { BACKEND, token } = useContext(AuthContext)
   const { theme } = useContext(ThemeContext)
 
-  const [quotes, setQuotes]       = useState([])
-  const [loading, setLoading]     = useState(true)
+  const [quotes, setQuotes] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editQuote, setEditQuote] = useState(null)
-  const [editForm, setEditForm]   = useState({ text: '', author: '', category: '' })
+  const [editForm, setEditForm] = useState({ text: '', author: '', category: '' })
 
   const categories = ['Motivation', 'Philosophy', 'Life', 'Love', 'Humor', 'Success', 'Other']
 
@@ -76,28 +76,26 @@ const MyQuotes = () => {
   }
 
   return (
-    <div className={`flex min-h-screen ${theme.bg} transition-colors duration-300`}>
+    <div className={`flex flex-col md:flex-row min-h-screen ${theme.bg} transition-colors duration-300`}>
       <Sidebar />
 
-      <main className="flex-1 p-10">
+      <main className="flex-1 p-5 sm:p-10 w-full overflow-x-hidden">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h2 className={`text-3xl font-medium ${theme.text}`}>My Quotes</h2>
-            <p className={`text-sm ${theme.text2} mt-1`}>Quotes you have submitted</p>
+            <h2 className={`text-2xl sm:text-3xl font-medium ${theme.text}`}>My Quotes</h2>
+            <p className={`text-xs sm:text-sm ${theme.text2} mt-1`}>Quotes you have submitted</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              to="/add-quote"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-full transition"
-            >
-              + Add Quote
-            </Link>
-          </div>
+          <Link
+            to="/add-quote"
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-full transition text-center self-start sm:self-auto"
+          >
+            + Add Quote
+          </Link>
         </div>
 
-        {/* Content */}
+        {/* Content Wrapper */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -115,37 +113,41 @@ const MyQuotes = () => {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
             {quotes.map((q) => (
               <div
                 key={q._id}
-                className={`${theme.bgCard} border ${theme.border} rounded-2xl p-6 transition`}
+                className={`${theme.bgCard} border ${theme.border} rounded-2xl p-5 sm:p-6 transition flex flex-col justify-between break-words`}
               >
-                <p className={`${theme.text} text-base leading-relaxed mb-3 italic font-light`}>
-                  "{q.text}"
-                </p>
-                <p className={`text-xs ${theme.text2} mb-4`}>— {q.author}</p>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs bg-green-500/10 text-green-500 px-3 py-1 rounded-full font-medium">
-                    ● Live
-                  </span>
-                  <span className="text-xs bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full">
-                    {q.category}
-                  </span>
+                <div>
+                  <p className={`${theme.text} text-sm sm:text-base leading-relaxed mb-3 italic font-light`}>
+                    "{q.text}"
+                  </p>
+                  <p className={`text-xs ${theme.text2} mb-4`}>— {q.author || 'Unknown'}</p>
                 </div>
-                <div className={`flex gap-2 pt-4 border-t ${theme.border}`}>
-                  <button
-                    onClick={() => openEdit(q)}
-                    className={`flex-1 border ${theme.border} ${theme.text2} hover:border-blue-500 hover:text-blue-500 text-xs py-2 rounded-full transition`}
-                  >
-                    ✏️ Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(q._id)}
-                    className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs py-2 rounded-full transition"
-                  >
-                    🗑 Delete
-                  </button>
+                <div>
+                  <div className="flex items-center justify-between mb-4 gap-2">
+                    <span className="text-[10px] bg-green-500/10 text-green-500 px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">
+                      ● Live
+                    </span>
+                    <span className="text-[10px] bg-blue-500/10 text-blue-500 px-2.5 py-0.5 rounded-full font-medium truncate">
+                      {q.category}
+                    </span>
+                  </div>
+                  <div className={`flex gap-2 pt-4 border-t ${theme.border}`}>
+                    <button
+                      onClick={() => openEdit(q)}
+                      className={`flex-1 border ${theme.border} ${theme.text2} hover:border-blue-500 hover:text-blue-500 text-xs py-2 rounded-full transition`}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(q._id)}
+                      className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 text-xs py-2 rounded-full transition"
+                    >
+                      🗑 Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -154,10 +156,10 @@ const MyQuotes = () => {
 
       </main>
 
-      {/* Edit Modal */}
+      {/* Edit Overlay Backdrop Modal */}
       {editQuote && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-          <div className={`${theme.bgCard} border ${theme.border} rounded-2xl p-8 w-full max-w-md shadow-xl`}>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-6 overflow-y-auto">
+          <div className={`${theme.bgCard} border ${theme.border} rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl transition-all max-h-full overflow-y-auto`}>
             <h3 className={`text-xl font-medium ${theme.text} mb-6`}>Edit Quote</h3>
             <form onSubmit={handleEdit} className="space-y-4">
               <div>
@@ -167,6 +169,7 @@ const MyQuotes = () => {
                   onChange={(e) => setEditForm({ ...editForm, text: e.target.value })}
                   rows={4}
                   maxLength={500}
+                  required
                   className={`w-full ${theme.bgInput} border ${theme.borderInput} ${theme.textInput} ${theme.placeholder} rounded-xl px-4 py-3 text-sm outline-none ${theme.focusBorder} transition resize-none`}
                 />
               </div>
@@ -191,17 +194,17 @@ const MyQuotes = () => {
                   ))}
                 </select>
               </div>
-              <div className="flex gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-3 rounded-full transition"
+                  className="w-full sm:flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-3 rounded-full transition"
                 >
                   Save Changes
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditQuote(null)}
-                  className={`flex-1 border ${theme.border} ${theme.text2} text-sm py-3 rounded-full transition`}
+                  className={`w-full sm:flex-1 border ${theme.border} ${theme.text2} text-sm py-3 rounded-full transition`}
                 >
                   Cancel
                 </button>

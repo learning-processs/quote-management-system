@@ -32,18 +32,16 @@ const Login = () => {
 
   return (
     /* 
-      FIX 1: Altered vertical alignment behavior on small screens. 
-      Using 'items-start pt-8 md:items-center md:pt-0' forces the login interface 
-      upward on mobile devices, preventing it from getting squished by the native keyboard.
+      FIX 1: Drops vertical centering on mobile so the card floats 
+      near the top layout grid, keeping input fields clear of the keyboard.
     */
     <div className="min-h-screen bg-gray-950 flex items-start justify-center pt-8 md:items-center md:pt-0 px-4 overflow-y-auto">
       
       {/* 
-        FIX 2: Added a structural bottom margin cushion layer ('mb-36 md:mb-0'). 
-        This introduces clean blank space beneath the login box layout context on mobile devices, 
-        giving your viewport container plenty of room to scroll upward dynamically while entering your data.
+        FIX 2: Adds the exact 40rem bottom margin cushion layer ('mb-40 md:mb-0')
+        so you can scroll up completely when entering your password on phone viewports.
       */}
-      <div className="w-full max-w-md mb-36 md:mb-0">
+      <div className="w-full max-w-md mb-40 md:mb-0">
 
         {/* Logo */}
         <div className="text-center mb-8">

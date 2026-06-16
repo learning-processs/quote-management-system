@@ -9,7 +9,6 @@ const Sidebar = () => {
   const { dark, toggleTheme, theme } = useContext(ThemeContext)
   const navigate = useNavigate()
   
-  // Mobile drawer panel visual flag toggler
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
@@ -27,11 +26,11 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Structural base wrapper container */}
-      <aside className={`w-full md:w-52 flex-shrink-0 border-b md:border-b-0 md:border-r ${theme.border} ${theme.bg} flex flex-col transition-colors duration-300 z-40 sticky md:relative top-0 md:min-h-screen`}>
+      {/* Structural base wrapper container - Locked to h-screen & sticky on desktop */}
+      <aside className={`w-full md:w-52 flex-shrink-0 border-b md:border-b-0 md:border-r ${theme.border} ${theme.bg} flex flex-col transition-colors duration-300 z-40 sticky top-0 md:h-screen`}>
         
         {/* ── Top Bar Brand Header View ── */}
-        <div className={`px-5 py-4 flex items-center justify-between border-b ${theme.border} h-16 relative z-50`}>
+        <div className={`px-5 py-4 flex items-center justify-between border-b ${theme.border} h-16 relative z-50 flex-shrink-0`}>
           <div className="flex flex-col justify-center">
             <Link 
               to="/dashboard" 
@@ -47,7 +46,6 @@ const Sidebar = () => {
             </span>
           </div>
 
-          {/* Mobile Navbar Hamburger Toggle Button centered perfectly */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`px-3 py-1.5 rounded-xl border ${theme.border} ${theme.text2} md:hidden hover:text-blue-500 transition-all text-xs font-semibold flex items-center justify-center h-8 my-auto cursor-pointer active:scale-95 select-none`}
@@ -56,19 +54,19 @@ const Sidebar = () => {
           </button>
         </div>
 
-        {/* ── Responsive Side-Drawer Panel (Slides Right-to-Left on Mobile) ── */}
+        {/* ── Responsive Side-Drawer Panel (Fills screen height on desktop) ── */}
         <div className={`
           fixed top-0 right-0 h-full w-64 shadow-2xl transform transition-transform duration-300 ease-in-out z-40
           ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} 
-          md:relative md:translate-x-0 md:flex md:h-auto md:w-full md:shadow-none
+          md:relative md:translate-x-0 md:flex md:h-[calc(100vh-64px)] md:w-full md:shadow-none
           flex flex-col divide-y md:divide-y-0 divide-gray-500/10 ${theme.bg} ${theme.border} md:border-none
         `}>
 
-          {/* Top layout padding offset spacing context placeholder for mobile only */}
+          {/* Top spacing placeholder for mobile drawer layout */}
           <div className="h-16 md:hidden flex-shrink-0" />
 
-          {/* Admin profile view block (Hidden on mobile navigation lists for clean sizing) */}
-          <div className={`px-5 py-5 border-b ${theme.border} hidden md:block animate-in fade-in duration-150`}>
+          {/* Admin profile view block */}
+          <div className={`px-5 py-5 border-b ${theme.border} hidden md:block animate-in fade-in duration-150 flex-shrink-0`}>
             <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold mb-3 shadow-lg shadow-blue-500/20">
               {admin?.name?.charAt(0).toUpperCase()}
             </div>
@@ -76,8 +74,8 @@ const Sidebar = () => {
             <div className="text-[10px] text-blue-500 font-medium mt-0.5 uppercase tracking-wider font-mono">{admin?.role}</div>
           </div>
 
-          {/* Navigation Core Routes Container */}
-          <nav className="py-4 md:py-4 flex-1 flex flex-col">
+          {/* Navigation Container */}
+          <nav className="py-4 md:py-4 flex-shrink-0 flex flex-col">
             {links.map((link) => (
               <NavLink
                 key={link.path}
@@ -98,8 +96,8 @@ const Sidebar = () => {
             ))}
           </nav>
 
-          {/* Settings Control Block */}
-          <div className={`px-5 py-6 md:py-5 md:border-t ${theme.border} space-y-4 bg-black/5 dark:bg-white/[0.01] md:bg-transparent`}>
+          {/* Settings Control Block - Permanently Anchored to Desktop Bottom */}
+          <div className={`px-5 py-6 md:py-6 md:border-t ${theme.border} space-y-4 bg-black/5 dark:bg-white/[0.01] md:bg-transparent md:mt-auto flex-shrink-0 pb-8`}>
             <button
               onClick={toggleTheme}
               className={`flex items-center gap-3 text-sm ${theme.text2} hover:text-blue-500 transition w-full group py-1 cursor-pointer`}
@@ -119,7 +117,7 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* ── Background Blurred Mask Overlay (Hides drawer instantly on external taps) ── */}
+      {/* Background Overlay */}
       {mobileMenuOpen && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden animate-in fade-in duration-200"

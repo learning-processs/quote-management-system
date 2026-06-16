@@ -26,11 +26,10 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Main Container Header Hook */}
-      <aside className={`w-full md:w-52 flex-shrink-0 border-b md:border-b-0 md:border-r ${theme.border} ${theme.bg} flex flex-col transition-colors duration-300 z-40 sticky md:relative top-0 md:min-h-screen`}>
+      <aside className={`w-full md:w-52 flex-shrink-0 border-b md:border-b-0 md:border-r ${theme.border} ${theme.bg} flex flex-col transition-colors duration-300 z-40 sticky top-0 md:h-screen`}>
 
         {/* ── Top Bar Container (Header) ── */}
-        <div className={`px-5 py-4 flex items-center justify-between border-b ${theme.border} h-16 relative z-50`}>
+        <div className={`px-5 py-4 flex items-center justify-between border-b ${theme.border} h-16 relative z-50 flex-shrink-0`}>
           <div className="flex flex-col justify-center">
             <Link 
               to="/dashboard" 
@@ -46,7 +45,6 @@ const Sidebar = () => {
             </span>
           </div>
 
-          {/* Mobile Hamburger Trigger Toggle Button with explicit hand pointer */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`px-3 py-1.5 rounded-xl border ${theme.border} ${theme.text2} md:hidden hover:text-blue-500 transition-all text-xs font-medium flex items-center justify-center h-8 my-auto cursor-pointer active:scale-95 select-none`}
@@ -55,19 +53,18 @@ const Sidebar = () => {
           </button>
         </div>
 
-        {/* ── Side-Drawer Menu Wrapper (Slides Right-to-Left on Mobile) ── */}
+        {/* ── Side-Drawer Menu Wrapper ── */}
         <div className={`
           fixed top-0 right-0 h-full w-64 shadow-2xl transform transition-transform duration-300 ease-in-out z-40
           ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} 
-          md:relative md:translate-x-0 md:flex md:h-auto md:w-full md:shadow-none
+          md:relative md:translate-x-0 md:flex md:h-[calc(100vh-64px)] md:w-full md:shadow-none
           flex flex-col divide-y md:divide-y-0 divide-gray-500/10 ${theme.bg} ${theme.border} md:border-none
         `}>
           
-          {/* Top layout padding offset spacing context placeholder for mobile only */}
           <div className="h-16 md:hidden flex-shrink-0" />
 
-          {/* User profile identifier pane (Hidden on mobile navigation lists for clean sizing) */}
-          <div className={`px-5 py-5 border-b ${theme.border} hidden md:block`}>
+          {/* User profile identifier pane */}
+          <div className={`px-5 py-5 border-b ${theme.border} hidden md:block flex-shrink-0`}>
             <div className="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white text-sm font-semibold mb-3 shadow-lg shadow-blue-500/20">
               {user?.name?.charAt(0).toUpperCase()}
             </div>
@@ -77,8 +74,8 @@ const Sidebar = () => {
             </div>
           </div>
 
-          {/* Interactive Navigation links layout layer */}
-          <nav className="py-4 md:py-4 flex-1 flex flex-col">
+          {/* Navigation links layout layer */}
+          <nav className="py-4 md:py-4 flex-shrink-0 flex flex-col">
             {links.map((link) => (
               <NavLink
                 key={link.path}
@@ -99,8 +96,8 @@ const Sidebar = () => {
             ))}
           </nav>
 
-          {/* System sign out control zone block */}
-          <div className={`px-5 py-6 md:py-5 md:border-t ${theme.border} bg-black/5 dark:bg-white/[0.01] md:bg-transparent`}>
+          {/* System sign out control zone block - Forced to bottom of screen */}
+          <div className={`px-5 py-6 md:py-6 md:border-t ${theme.border} bg-black/5 dark:bg-white/[0.01] md:bg-transparent md:mt-auto flex-shrink-0 pb-8`}>
             <button
               onClick={handleLogout}
               className={`flex items-center gap-3 text-sm ${theme.text2} hover:text-red-500 font-medium transition w-full py-1 cursor-pointer`}
@@ -112,7 +109,7 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* ── Background Blurred Mask Overlay (Hides drawer instantly on external taps) ── */}
+      {/* Background Mask Overlay */}
       {mobileMenuOpen && (
         <div 
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden animate-in fade-in duration-200"

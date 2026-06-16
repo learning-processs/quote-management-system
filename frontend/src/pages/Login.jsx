@@ -31,8 +31,19 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    /* 
+      FIX 1: Altered vertical alignment behavior on small screens. 
+      Using 'items-start pt-8 md:items-center md:pt-0' forces the login interface 
+      upward on mobile devices, preventing it from getting squished by the native keyboard.
+    */
+    <div className="min-h-screen bg-gray-950 flex items-start justify-center pt-8 md:items-center md:pt-0 px-4 overflow-y-auto">
+      
+      {/* 
+        FIX 2: Added a structural bottom margin cushion layer ('mb-36 md:mb-0'). 
+        This introduces clean blank space beneath the login box layout context on mobile devices, 
+        giving your viewport container plenty of room to scroll upward dynamically while entering your data.
+      */}
+      <div className="w-full max-w-md mb-36 md:mb-0">
 
         {/* Logo */}
         <div className="text-center mb-8">
@@ -42,7 +53,7 @@ const Login = () => {
           <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">quotes</p>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
 
           <h2 className="text-2xl font-medium text-white mb-1">Welcome back</h2>
           <p className="text-sm text-gray-500 mb-8">Sign in to continue sharing quotes.</p>
@@ -74,12 +85,12 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
-                <input type="checkbox" className="accent-blue-500" />
+            <div className="flex items-center justify-between select-none">
+              <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer group hover:text-gray-400 transition">
+                <input type="checkbox" className="accent-blue-500 cursor-pointer" />
                 Remember me
               </label>
-              <span className="text-sm text-blue-500 cursor-pointer hover:underline">
+              <span className="text-sm text-blue-500 cursor-pointer hover:underline select-none">
                 Forgot password?
               </span>
             </div>
@@ -87,7 +98,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl text-sm transition disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl text-sm transition disabled:opacity-50 cursor-pointer active:scale-[0.99]"
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
@@ -95,7 +106,7 @@ const Login = () => {
 
           <p className="text-center text-sm text-gray-600 mt-6">
             No account?{' '}
-            <Link to="/register" className="text-blue-500 font-medium hover:underline">
+            <Link to="/register" className="text-blue-500 font-medium hover:underline cursor-pointer">
               Create one free
             </Link>
           </p>

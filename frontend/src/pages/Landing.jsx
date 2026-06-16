@@ -147,7 +147,7 @@ const Landing = () => {
 
               <div className="flex items-center justify-between pt-4 border-t border-gray-500/5">
                 <span className={`text-xs font-mono opacity-50 ${theme.text2}`}>
-                  — Variable_Author
+                  — Lifefkd24x7
                 </span>
                 <span className="text-[10px] bg-purple-500/10 text-purple-400 font-mono px-2.5 py-0.5 rounded-md uppercase tracking-wider">
                   Philosophy

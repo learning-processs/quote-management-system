@@ -28,7 +28,7 @@ const Sidebar = () => {
     <>
       <aside className={`w-full md:w-52 flex-shrink-0 border-b md:border-b-0 md:border-r ${theme.border} ${theme.bg} flex flex-col transition-colors duration-300 z-40 sticky top-0 md:h-screen`}>
 
-        {/* ── Top Bar Container (Header) ── */}
+        {/* ── Top Bar Container ── */}
         <div className={`px-5 py-4 flex items-center justify-between border-b ${theme.border} h-16 relative z-50 flex-shrink-0`}>
           <div className="flex flex-col justify-center">
             <Link 
@@ -57,7 +57,7 @@ const Sidebar = () => {
         <div className={`
           fixed top-0 right-0 h-full w-64 shadow-2xl transform transition-transform duration-300 ease-in-out z-40
           ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'} 
-          md:relative md:translate-x-0 md:flex md:h-[calc(100vh-64px)] md:w-full md:shadow-none
+          md:relative md:translate-x-0 md:h-[calc(100vh-64px)] md:w-full md:shadow-none
           flex flex-col divide-y md:divide-y-0 divide-gray-500/10 ${theme.bg} ${theme.border} md:border-none
         `}>
           
@@ -96,8 +96,8 @@ const Sidebar = () => {
             ))}
           </nav>
 
-          {/* System sign out control zone block - Forced to bottom of screen */}
-          <div className={`px-5 py-6 md:py-6 md:border-t ${theme.border} bg-black/5 dark:bg-white/[0.01] md:bg-transparent md:mt-auto flex-shrink-0 pb-8`}>
+          {/* System sign out control zone block - Dynamic bottom lock */}
+          <div className={`px-5 py-6 md:py-6 border-t md:border-t ${theme.border} bg-black/5 dark:bg-white/[0.01] md:bg-transparent mt-auto flex-shrink-0 pb-8`}>
             <button
               onClick={handleLogout}
               className={`flex items-center gap-3 text-sm ${theme.text2} hover:text-red-500 font-medium transition w-full py-1 cursor-pointer`}

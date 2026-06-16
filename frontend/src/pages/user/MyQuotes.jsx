@@ -87,12 +87,12 @@ const MyQuotes = () => {
             <h2 className={`text-2xl sm:text-3xl font-medium ${theme.text}`}>My Quotes</h2>
             <p className={`text-xs sm:text-sm ${theme.text2} mt-1`}>Quotes you have submitted</p>
           </div>
-          <Link
+          {/* <Link
             to="/add-quote"
             className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-full transition text-center self-start sm:self-auto"
           >
             + Add Quote
-          </Link>
+          </Link> */}
         </div>
 
         {/* Content Wrapper */}

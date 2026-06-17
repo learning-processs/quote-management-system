@@ -31,9 +31,9 @@ const Landing = () => {
     <div
       className={`min-h-screen ${theme.bg} transition-colors duration-500 font-sans antialiased flex flex-col relative overflow-hidden`}
     >
-      {/* 🔮 Background Glows */}
-      <div className="absolute top-[-10%] left-[-20%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none animate-pulse" />
-      <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none" />
+      {/* 🔮 Moody Ambient Glows - Adjusted color saturation dynamically based on mode */}
+      <div className={`absolute top-[-10%] left-[-20%] w-[800px] h-[800px] ${dark ? 'bg-blue-600/10' : 'bg-blue-500/[0.04]'} rounded-full blur-[150px] pointer-events-none animate-pulse`} />
+      <div className={`absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] ${dark ? 'bg-purple-600/10' : 'bg-purple-500/[0.04]'} rounded-full blur-[130px] pointer-events-none`} />
 
       {/* ── Navbar ── */}
       <nav
@@ -154,13 +154,14 @@ const Landing = () => {
         </div>
       </main>
 
-      {/* ── 🌌 SECTION 2: Clean Gallery with Sharp Visible Borders ── */}
-      <section className="w-full py-24 px-6 md:px-16 bg-gradient-to-b from-transparent to-black/50 relative z-20 border-t border-gray-500/10">
+      {/* ── 🌌 SECTION 2: Fully Adaptive Multi-Theme Thoughts Gallery ── */}
+      <section className={`w-full py-24 px-6 md:px-16 relative z-20 border-t ${theme.border} ${dark ? 'bg-gradient-to-b from-transparent to-black/50' : 'bg-gray-50/50'}`}>
         <div className="max-w-7xl mx-auto w-full">
           
+          {/* Section Header */}
           <div className="mb-16 text-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-mono uppercase tracking-widest mb-3 border border-blue-500/30 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-blue-500 dark:text-blue-400 text-[10px] font-mono uppercase tracking-widest mb-3 border border-blue-500/20 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
               <span>The Midnight Mind</span> 
             </div>
             <h3 className={`text-3xl md:text-5xl font-bold tracking-tight ${theme.text}`}>
@@ -184,25 +185,29 @@ const Landing = () => {
               {publicQuotes.map((q) => (
                 <div 
                   key={q._id} 
-                  /* FIX: Changed border style to 'border-gray-700' for crisp clarity,
-                    while keeping your custom midnight background shading completely unchanged.
+                  /* FIX CHANGES:
+                    1. Replaced hardcoded 'bg-gray-950/30' with global context layout 'theme.bgCard'
+                    2. Replaced hardcoded 'border-gray-700' with your global variable context theme 'theme.border'
+                    3. Applied subtle dynamic ambient shadow variables based on active dark setting
                   */
-                  className="bg-gray-950/30 border border-gray-700 hover:border-blue-500/60 rounded-2xl p-6 md:p-8 transition-all duration-300 flex flex-col justify-between relative group hover:-translate-y-1 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md"
+                  className={`${theme.bgCard} ${theme.border} border hover:border-blue-500/60 rounded-2xl p-6 md:p-8 transition-all duration-300 flex flex-col justify-between relative group hover:-translate-y-1 backdrop-blur-md ${dark ? 'shadow-[0_10px_30px_rgba(0,0,0,0.5)]' : 'shadow-[0_4px_20px_rgba(0,0,0,0.04)]'}`}
                 >
-                  <div className="mb-4 opacity-40 group-hover:opacity-60 transition-opacity">
+                  <div className="mb-4 opacity-30 group-hover:opacity-50 transition-opacity">
                     <span className="text-3xl font-serif text-blue-500 font-bold">“</span>
                   </div>
 
-                  <p className="text-lg font-serif italic text-white leading-relaxed tracking-wide mb-8 drop-shadow">
+                  {/* FIX: Replaced hardcoded 'text-white' with 'theme.text' so it switches to crisp dark charcoal in Light Mode */}
+                  <p className={`text-base md:text-lg font-serif italic ${theme.text} leading-relaxed tracking-wide mb-8`}>
                     {q.text}
                   </p>
                   
-                  {/* FIX: Set divider line to clear grey tone too */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-700 mt-auto">
-                    <span className="text-xs font-medium text-gray-300 truncate max-w-[150px]">
+                  {/* FIX: Using universal 'theme.border' rules for the bottom horizontal alignment separator */}
+                  <div className={`flex items-center justify-between pt-4 border-t ${theme.border} mt-auto`}>
+                    {/* FIX: Replaced hardcoded 'text-gray-300' with layout variable helper component 'theme.text2' */}
+                    <span className={`text-xs font-medium ${theme.text2} truncate max-w-[150px]`}>
                       — {q.author || "Someone"}
                     </span>
-                    <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono px-2.5 py-0.5 rounded-md uppercase tracking-wider font-semibold">
+                    <span className="text-[10px] bg-blue-500/10 text-blue-500 dark:text-blue-400 border border-blue-500/20 font-mono px-2.5 py-0.5 rounded-md uppercase tracking-wider font-semibold">
                       {q.category || "Thoughts"}
                     </span>
                   </div>
@@ -215,7 +220,7 @@ const Landing = () => {
       </section>
 
       {/* ── Footer ── */}
-      <footer className={`border-t ${theme.border} px-6 md:px-16 py-8 bg-black/40 mt-auto`}>
+      <footer className={`border-t ${theme.border} px-6 md:px-16 py-8 ${dark ? 'bg-black/40' : 'bg-gray-50'} mt-auto`}>
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono opacity-50">
           <span className={theme.text2}>
             © 2026 Lifefkd24x7. Built for clean expression.

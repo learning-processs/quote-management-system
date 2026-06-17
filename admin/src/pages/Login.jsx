@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react' // Added useEffect here
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
@@ -6,10 +6,21 @@ import { AuthContext } from '../context/AuthContext'
 
 const Login = () => {
   const navigate = useNavigate()
-  const { BACKEND, login } = useContext(AuthContext)
+  const { BACKEND, login, token, admin } = useContext(AuthContext) // Destructured token and admin from context
 
   const [form, setForm]       = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
+
+  /*
+    ⚡ AUTO-REDIRECT LAYER:
+    If a valid token or admin session is already alive in the app context state,
+    instantly fast-forward them straight to the secure admin dashboard view.
+  */
+  useEffect(() => {
+    if (token || admin) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [token, admin, navigate])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -31,8 +42,9 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
+    /* Kept your responsive keyboard spacing overrides intact */
+    <div className="min-h-screen bg-gray-950 flex items-start justify-center pt-8 md:items-center md:pt-0 px-4 overflow-y-auto">
+      <div className="w-full max-w-md mb-40 md:mb-0">
 
         {/* Logo */}
         <div className="text-center mb-8">
@@ -44,7 +56,7 @@ const Login = () => {
           </span>
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
 
           <h2 className="text-2xl font-medium text-white mb-1">Admin Sign in</h2>
           <p className="text-sm text-gray-500 mb-8">Restricted access — admins only.</p>
@@ -83,7 +95,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl text-sm transition disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl text-sm transition disabled:opacity-50 cursor-pointer active:scale-[0.99]"
             >
               {loading ? 'Signing in...' : 'Sign in as Admin'}
             </button>

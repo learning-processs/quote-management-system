@@ -1,19 +1,39 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from "../context/ThemeContext";
 
 const Landing = () => {
-  const { user } = useContext(AuthContext);
+  const { user, BACKEND } = useContext(AuthContext);
   const { dark, toggleTheme, theme } = useContext(ThemeContext);
+
+  const [publicQuotes, setPublicQuotes] = useState([]);
+  const [fetchingQuotes, setFetchingQuotes] = useState(true);
+
+  useEffect(() => {
+    const fetchPublicStream = async () => {
+      try {
+        const { data } = await axios.get(`${BACKEND}/api/quotes?limit=6`);
+        if (data.success) {
+          setPublicQuotes(data.data.quotes || []);
+        }
+      } catch (err) {
+        console.log("Error loading public feed stream.");
+      } finally {
+        setFetchingQuotes(false);
+      }
+    };
+    fetchPublicStream();
+  }, [BACKEND]);
 
   return (
     <div
-      className={`min-h-screen ${theme.bg} transition-colors duration-500 font-sans antialiased flex flex-col justify-between relative overflow-hidden`}
+      className={`min-h-screen ${theme.bg} transition-colors duration-500 font-sans antialiased flex flex-col relative overflow-hidden`}
     >
-      {/* Decorative Background Glows */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* 🔮 Moody Background Lights */}
+      <div className="absolute top-[-10%] left-[-20%] w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[130px] pointer-events-none" />
 
       {/* ── Navbar ── */}
       <nav
@@ -29,7 +49,7 @@ const Landing = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={toggleTheme}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center border ${theme.border} ${theme.text2} hover:bg-blue-500/5 hover:text-blue-500 transition-all text-sm`}
+            className={`w-10 h-10 rounded-xl flex items-center justify-center border ${theme.border} ${theme.text2} hover:bg-blue-500/5 hover:text-blue-500 transition-all text-sm cursor-pointer`}
           >
             {dark ? "☀️" : "🌙"}
           </button>
@@ -60,26 +80,21 @@ const Landing = () => {
         </div>
       </nav>
 
-      {/* ── Hero Content / Minimalist Split Screen ── */}
-      <main className="max-w-7xl mx-auto px-6 md:px-16 py-12 lg:py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center flex-1 w-full relative z-10">
-        {/* Left Core Message Column */}
+      {/* ── SECTION 1: Hero Segment ── */}
+      <main className="max-w-7xl mx-auto px-6 md:px-16 py-12 lg:py-24 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full relative z-10 flex-shrink-0">
         <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-500 text-[11px] font-bold uppercase tracking-widest">
             <span>⚡ The Unfiltered Stream</span>
           </div>
 
-          <h2
-            className={`text-5xl sm:text-7xl font-bold ${theme.text} tracking-tight leading-tight`}
-          >
+          <h2 className={`text-5xl sm:text-7xl font-bold ${theme.text} tracking-tight leading-tight`}>
             Stop scrolling. <br />
             <span className="italic font-serif font-normal text-blue-500">
               Start feeling.
             </span>
           </h2>
 
-          <p
-            className={`text-lg ${theme.text2} max-w-lg leading-relaxed font-light opacity-80`}
-          >
+          <p className={`text-lg ${theme.text2} max-w-lg leading-relaxed font-light opacity-80`}>
             The world is loud enough. Here, we keep it real. No filters, no
             algorithms, just the raw thoughts that keep you up at night. Add
             your voice to the vault.
@@ -112,61 +127,93 @@ const Landing = () => {
           </div>
         </div>
 
-        {/* Right Interactive Mockup Terminal */}
         <div className="lg:col-span-6 relative w-full max-w-lg mx-auto lg:max-w-none">
           <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/5 to-purple-500/5 rounded-3xl blur-xl" />
-
-          <div
-            className={`border ${theme.border} ${theme.bgCard} rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden group`}
-          >
-            {/* Top Command Control Header Bar */}
+          <div className={`border ${theme.border} ${theme.bgCard} rounded-3xl shadow-2xl p-6 sm:p-8 relative overflow-hidden group`}>
             <div className="flex justify-between items-center mb-8 border-b border-gray-500/5 pb-4">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500/30" />
                 <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/30" />
                 <span className="w-2.5 h-2.5 rounded-full bg-green-500/30" />
               </div>
-              <span className="text-[10px] font-mono opacity-30 uppercase tracking-widest">
-                Live_Core_Feed
-              </span>
+              <span className="text-[10px] font-mono opacity-30 uppercase tracking-widest">Live_Core_Feed</span>
             </div>
-
-            {/* Simulated Dynamic Code Terminal Content */}
             <div className="space-y-6">
               <div className="space-y-2">
-                <p className="text-xs font-mono text-blue-500/60">
-                  # Active thought payload
-                </p>
-                <p
-                  className={`text-xl sm:text-2xl font-serif italic ${theme.text} leading-relaxed`}
-                >
-                  "Everything happens twice. Once in your head, and once in
-                  reality. Master the first."
+                <p className="text-xs font-mono text-blue-500/60"># Active thought payload</p>
+                <p className={`text-xl sm:text-2xl font-serif italic ${theme.text} leading-relaxed`}>
+                  "Everything happens twice. Once in your head, and once in reality. Master the first."
                 </p>
               </div>
-
               <div className="flex items-center justify-between pt-4 border-t border-gray-500/5">
-                <span className={`text-xs font-mono opacity-50 ${theme.text2}`}>
-                  — Lifefkd24x7
-                </span>
-                <span className="text-[10px] bg-purple-500/10 text-purple-400 font-mono px-2.5 py-0.5 rounded-md uppercase tracking-wider">
-                  Philosophy
-                </span>
+                <span className={`text-xs font-mono opacity-50 ${theme.text2}`}>— Lifefkd24x7</span>
+                <span className="text-[10px] bg-purple-500/10 text-purple-400 font-mono px-2.5 py-0.5 rounded-md uppercase tracking-wider">Philosophy</span>
               </div>
-            </div>
-
-            {/* Subtle floating card background logic texture decoration */}
-            <div className="absolute bottom-[-10px] right-4 font-mono text-[80px] text-gray-500/[0.02] font-black select-none pointer-events-none">
-              ”
             </div>
           </div>
         </div>
       </main>
 
-      {/* ── Ultra Clean Structural Footer ── */}
-      <footer
-        className={`border-t ${theme.border} px-6 md:px-16 py-8 bg-black/5 dark:bg-white/[0.01]`}
-      >
+      {/* ── 🌌 SECTION 2: Highly Attractive Midnight Thoughts Gallery ── */}
+      <section className="w-full py-24 px-6 md:px-16 bg-gradient-to-b from-transparent to-black/30 relative z-20 border-t border-gray-500/10">
+        <div className="max-w-7xl mx-auto w-full">
+          
+          {/* High-Engagement Content Header */}
+          <div className="mb-16 text-center">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-mono uppercase tracking-widest mb-3 border border-blue-500/20 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              {/* Changed tag hook line to be highly appealing */}
+              <span>The Midnight Mind</span> 
+            </div>
+            <h3 className={`text-3xl md:text-5xl font-bold tracking-tight ${theme.text}`}>
+              The <span className="font-serif italic font-normal text-blue-500">3AM Thoughts</span> Gallery
+            </h3>
+            <p className={`text-xs md:text-sm ${theme.text2} mt-2 max-w-md mx-auto opacity-70`}>
+              Where raw notes and real, unfiltered entries live when the rest of the world is asleep.
+            </p>
+          </div>
+
+          {fetchingQuotes ? (
+            <div className="flex justify-center py-24">
+              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : publicQuotes.length === 0 ? (
+            <div className={`text-center py-16 ${theme.text2} text-sm font-serif italic opacity-40 border border-dashed ${theme.border} rounded-3xl`}>
+              The gallery is currently completely quiet.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {publicQuotes.map((q) => (
+                <div 
+                  key={q._id} 
+                  className="bg-gray-950/30 border border-gray-800/60 hover:border-blue-500/30 rounded-2xl p-6 md:p-8 transition-all duration-300 flex flex-col justify-between relative group hover:-translate-y-1 shadow-[0_4px_30px_rgba(0,0,0,0.3)] backdrop-blur-sm"
+                >
+                  <div className="mb-6 opacity-20 group-hover:opacity-40 transition-opacity">
+                    <span className="text-3xl font-serif text-blue-500">“</span>
+                  </div>
+
+                  <p className="text-base md:text-lg font-serif italic text-gray-200 leading-relaxed tracking-wide mb-8">
+                    {q.text}
+                  </p>
+                  
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-800/40 mt-auto">
+                    <span className="text-xs font-medium text-gray-400 truncate max-w-[150px]">
+                      — {q.author || "Someone"}
+                    </span>
+                    <span className="text-[10px] bg-blue-500/5 text-blue-400 border border-blue-500/10 font-mono px-2.5 py-0.5 rounded-md uppercase tracking-wider font-medium">
+                      {q.category || "Thoughts"}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* ── Footer ── */}
+      <footer className={`border-t ${theme.border} px-6 md:px-16 py-8 bg-black/20 mt-auto`}>
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-mono opacity-50">
           <span className={theme.text2}>
             © 2026 Lifefkd24x7. Built for clean expression.
@@ -174,9 +221,7 @@ const Landing = () => {
           <div className="flex gap-4">
             <span className="hover:underline cursor-pointer">Architecture</span>
             <span>·</span>
-            <span className="hover:underline cursor-pointer">
-              Access Terminals
-            </span>
+            <span className="hover:underline cursor-pointer">Access Terminals</span>
           </div>
         </div>
       </footer>
